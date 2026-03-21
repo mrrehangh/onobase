@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onobase — One Base. Every Database.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #080C12;
+    --bg2:       #0D1219;
+    --bg3:       #111820;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.12);
+    --accent:    #00E5B0;
+    --accent2:   #0066FF;
+    --accent3:   #7B4FFF;
+    --text:      #E8EDF5;
+    --muted:     #6B7A90;
+    --muted2:    #9AAABE;
+    --font-display: 'Syne', sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+    --font-body:    'Instrument Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BACKGROUND ─────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,176,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,176,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(8,12,18,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bg);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted2);
+    text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--accent);
+    color: var(--bg) !important;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600 !important;
+    transition: opacity 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.85; color: var(--bg) !important; }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(0,229,176,0.08) 0%, rgba(0,102,255,0.05) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    text-align: center;
+    max-width: 860px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,176,0.08);
+    border: 1px solid rgba(0,229,176,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    margin-bottom: 40px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    margin-bottom: 12px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-title-line1 { display: block; color: var(--text); }
+
+  .hero-title-line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-ono {
+    font-family: var(--font-mono);
+    font-size: clamp(13px, 1.5vw, 16px);
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-ono span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted2);
+    max-width: 600px;
+    margin: 0 auto 48px;
+    line-height: 1.6;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 32px rgba(0,229,176,0.25);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 48px rgba(0,229,176,0.4);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 14px 28px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.04);
+  }
+
+  /* ── HERO MOCKUP ──────────────────────────────────────── */
+  .hero-mockup {
+    position: relative;
+    margin: 80px auto 0;
+    max-width: 1000px;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .mockup-frame {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  .mockup-bar {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mockup-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .mockup-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: #FF5F57; }
+  .dot-y { background: #FFBD2E; }
+  .dot-g { background: #28CA41; }
+
+  .mockup-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    flex: 1;
+    text-align: center;
+  }
+
+  .mockup-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    height: 420px;
+  }
+
+  .mockup-sidebar {
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    overflow: hidden;
+  }
+
+  .sidebar-section {
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 8px 4px;
+  }
+
+  .sidebar-module {
+    border-radius: 6px;
+    margin-bottom: 2px;
+    overflow: hidden;
+  }
+
+  .module-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .module-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .module-tables {
+    padding: 2px 0 4px 26px;
+  }
+
+  .table-item {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .table-item:hover { background: rgba(255,255,255,0.05); }
+  .table-item.active { color: var(--accent); background: rgba(0,229,176,0.08); }
+
+  .mockup-canvas {
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(rgba(0,229,176,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,176,0.02) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-color: var(--bg);
+  }
+
+  /* SVG canvas diagram */
+  .canvas-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Module cards in canvas */
+  .canvas-module {
+    position: absolute;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+    min-width: 160px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .canvas-module-header {
+    padding: 8px 12px;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .canvas-module-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    background: currentColor;
+    opacity: 0.3;
+  }
+
+  .canvas-table-row {
+    padding: 5px 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .canvas-table-row.header-row {
+    color: var(--text);
+    font-weight: 500;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .col-type {
+    font-size: 9px;
+    color: var(--muted);
+    margin-left: auto;
+    font-family: var(--font-mono);
+  }
+
+  .pk-badge {
+    font-size: 8px;
+    background: rgba(0,229,176,0.15);
+    color: var(--accent);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── STATS BAR ────────────────────────────────────────── */
+  .stats-bar {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 24px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 0 48px;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── SECTION COMMON ───────────────────────────────────── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .section-sub {
+    font-size: 18px;
+    color: var(--muted2);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* ── HOW IT WORKS ─────────────────────────────────────── */
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 64px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .how-card {
+    background: var(--bg2);
+    padding: 40px 32px;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .how-card:hover { background: var(--bg3); }
+
+  .how-card + .how-card {
+    border-left: 1px solid var(--border);
+  }
+
+  .how-number {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+
+  .how-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .how-card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .how-card-text {
+    font-size: 14px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+
+  /* ── FEATURES ─────────────────────────────────────────── */
+  .features-section {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    margin-top: 64px;
+    background: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .feature-card {
+    background: var(--bg2);
+    padding: 40px;
+    transition: background 0.3s;
+  }
+
+  .feature-card:hover { background: var(--bg3); }
+
+  .feature-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+
+  .feature-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+
+  .feature-text {
+    font-size: 14px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+
+  /* ── DB PLUGINS ───────────────────────────────────────── */
+  .plugins-section {}
+
+  .plugins-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 48px;
+  }
+
+  .plugin-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 16px;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+
+  .plugin-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-3px);
+  }
+
+  .plugin-logo {
+    font-size: 28px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .plugin-name {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .plugin-covers {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .plugin-badge {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    background: rgba(0,229,176,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,229,176,0.2);
+  }
+
+  /* ── CLOUD COVERAGE ───────────────────────────────────── */
+  .cloud-strip {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .cloud-strip-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .cloud-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cloud-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  /* ── MODULE VISUAL ────────────────────────────────────── */
+  .module-section {}
+
+  .module-demo {
+    margin-top: 64px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+
+  .module-demo-bar {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .module-demo-canvas {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    min-height: 340px;
+    background:
+      linear-gradient(rgba(0,229,176,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,176,0.015) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-color: var(--bg);
+  }
+
+  .demo-module {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+  }
+
+  .demo-module-head {
+    padding: 10px 14px;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .demo-module-head svg {
+    opacity: 0.5;
+  }
+
+  .demo-table-name {
+    padding: 7px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+
+  .demo-table-name:hover {
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+  }
+
+  .table-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── PRICING ──────────────────────────────────────────── */
+  .pricing-section {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 64px;
+  }
+
+  .price-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 32px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .price-card:hover { border-color: var(--border2); }
+
+  .price-card.featured {
+    border-color: var(--accent);
+    background: rgba(0,229,176,0.04);
+  }
+
+  .price-card.featured::before {
+    content: 'MOST POPULAR';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 4px 14px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .price-tier {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .price-amount {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .price-amount span {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+
+  .price-period {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .price-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .price-features {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+
+  .price-features li {
+    font-size: 14px;
+    color: var(--muted2);
+    padding: 6px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.4;
+  }
+
+  .price-features li::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    background: rgba(0,229,176,0.15);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2300E5B0'%3E%3Cpath d='M3 8l3.5 3.5L13 5'  stroke='%2300E5B0' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .btn-price {
+    display: block;
+    text-align: center;
+    padding: 13px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid var(--border2);
+    color: var(--text);
+  }
+
+  .btn-price:hover {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .btn-price.featured-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+
+  .btn-price.featured-btn:hover {
+    box-shadow: 0 0 32px rgba(0,229,176,0.3);
+    transform: translateY(-1px);
+  }
+
+  /* ── EARLY ACCESS ─────────────────────────────────────── */
+  .early-section {
+    text-align: center;
+    padding: 100px 48px;
+  }
+
+  .early-inner {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .early-glow {
+    position: absolute;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(0,102,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .email-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 40px;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .email-input {
+    flex: 1;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 13px 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .email-input:focus { border-color: var(--accent); }
+  .email-input::placeholder { color: var(--muted); }
+
+  .email-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    padding: 13px 24px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+
+  .email-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .early-note {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 24px;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--muted2); }
+
+  .footer-obnet {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .footer-obnet span { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-mark">1</div>
+    <span class="logo-text">Onobase</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#databases">Databases</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#early" class="nav-cta">Early Access</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div style="width:100%; max-width:1100px; margin:0 auto;">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Now in development — early access opening soon
+      </div>
+      <h1 class="hero-title">
+        <span class="hero-title-line1">One base for</span>
+        <span class="hero-title-line2">every database.</span>
+      </h1>
+      <p class="hero-ono"><span>ono</span> = one &nbsp;·&nbsp; uno &nbsp;·&nbsp; ein &nbsp;·&nbsp; un &nbsp;·&nbsp; один</p>
+      <p class="hero-sub">Stop wrestling with SQL dialects. Onobase speaks every database language so you don't have to — one universal tool, one visual canvas, every database you'll ever work with.</p>
+      <div class="hero-actions">
+        <a href="#early" class="btn-primary">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Get Early Access
+        </a>
+        <a href="#how" class="btn-secondary">
+          See how it works
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- App mockup -->
+    <div class="hero-mockup">
+      <div class="mockup-frame">
+        <div class="mockup-bar">
+          <div class="mockup-dots">
+            <div class="mockup-dot dot-r"></div>
+            <div class="mockup-dot dot-y"></div>
+            <div class="mockup-dot dot-g"></div>
+          </div>
+          <span class="mockup-title">onobase — project_alpha.ono &nbsp;[PostgreSQL]</span>
+        </div>
+        <div class="mockup-body">
+          <!-- Sidebar -->
+          <div class="mockup-sidebar">
+            <div class="sidebar-section">
+              <div class="sidebar-label">Modules</div>
+              <!-- Auth module -->
+              <div class="sidebar-module">
+                <div class="module-header" style="background:rgba(0,229,176,0.08); color:#00E5B0;">
+                  <div class="module-dot" style="background:#00E5B0;"></div>
+                  Auth &amp; Users
+                  <svg style="margin-left:auto;opacity:0.5" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="module-tables">
+                  <div class="table-item active">users</div>
+                  <div class="table-item">roles</div>
+                  <div class="table-item">sessions</div>
+                  <div class="table-item">permissions</div>
+                </div>
+              </div>
+              <!-- Billing module -->
+              <div class="sidebar-module">
+                <div class="module-header" style="color:#7B4FFF;">
+                  <div class="module-dot" style="background:#7B4FFF;"></div>
+                  Billing
+                  <svg style="margin-left:auto;opacity:0.5" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </div>
+              <!-- Core module -->
+              <div class="sidebar-module">
+                <div class="module-header" style="color:#0066FF;">
+                  <div class="module-dot" style="background:#0066FF;"></div>
+                  Core Data
+                  <svg style="margin-left:auto;opacity:0.5" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </div>
+              <!-- Analytics -->
+              <div class="sidebar-module">
+                <div class="module-header" style="color:#FF6B2B;">
+                  <div class="module-dot" style="background:#FF6B2B;"></div>
+                  Analytics
+                  <svg style="margin-left:auto;opacity:0.5" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Canvas -->
+          <div class="mockup-canvas">
+            <!-- Connection line SVG -->
+            <svg class="canvas-svg" style="pointer-events:none;">
+              <defs>
+                <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="rgba(0,229,176,0.4)"/>
+                </marker>
+              </defs>
+              <!-- Line from users to orders -->
+              <path d="M 310 130 C 360 130 360 220 410 220" stroke="rgba(0,229,176,0.35)" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+              <!-- Line from users to sessions -->
+              <path d="M 310 150 C 370 150 370 310 420 310" stroke="rgba(0,102,255,0.35)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+            </svg>
+            <!-- Auth module card -->
+            <div class="canvas-module" style="top:60px; left:30px; width:180px;">
+              <div class="canvas-module-header" style="background:rgba(0,229,176,0.12); color:#00E5B0;">
+                <span>Auth &amp; Users</span>
+                <div class="canvas-module-icon" style="color:#00E5B0;"></div>
+              </div>
+              <div class="canvas-table-row header-row">
+                <span>👤</span> users
+              </div>
+              <div class="canvas-table-row">id <span class="pk-badge">PK</span><span class="col-type">uuid</span></div>
+              <div class="canvas-table-row">email <span class="col-type">varchar</span></div>
+              <div class="canvas-table-row">created_at <span class="col-type">timestamp</span></div>
+              <div class="canvas-table-row header-row">
+                <span>🔑</span> roles
+              </div>
+              <div class="canvas-table-row">id <span class="pk-badge">PK</span><span class="col-type">int</span></div>
+              <div class="canvas-table-row">name <span class="col-type">varchar</span></div>
+            </div>
+            <!-- Billing module card -->
+            <div class="canvas-module" style="top:60px; left:250px; width:170px;">
+              <div class="canvas-module-header" style="background:rgba(123,79,255,0.12); color:#7B4FFF;">
+                <span>Billing</span>
+                <div class="canvas-module-icon" style="color:#7B4FFF;"></div>
+              </div>
+              <div class="canvas-table-row header-row">
+                <span>💳</span> orders
+              </div>
+              <div class="canvas-table-row">id <span class="pk-badge">PK</span><span class="col-type">uuid</span></div>
+              <div class="canvas-table-row">user_id <span class="col-type">uuid FK</span></div>
+              <div class="canvas-table-row">amount <span class="col-type">decimal</span></div>
+              <div class="canvas-table-row header-row">
+                <span>📦</span> invoices
+              </div>
+              <div class="canvas-table-row">id <span class="pk-badge">PK</span><span class="col-type">int</span></div>
+            </div>
+            <!-- Core module card -->
+            <div class="canvas-module" style="top:250px; left:250px; width:170px;">
+              <div class="canvas-module-header" style="background:rgba(0,102,255,0.12); color:#0066FF;">
+                <span>Core Data</span>
+                <div class="canvas-module-icon" style="color:#0066FF;"></div>
+              </div>
+              <div class="canvas-table-row header-row">
+                <span>📋</span> sessions
+              </div>
+              <div class="canvas-table-row">token <span class="pk-badge">PK</span><span class="col-type">varchar</span></div>
+              <div class="canvas-table-row">user_id <span class="col-type">uuid FK</span></div>
+              <div class="canvas-table-row">expires <span class="col-type">timestamp</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-number">5</div>
+    <div class="stat-label">core DB plugins</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">95%</div>
+    <div class="stat-label">of databases covered</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">1</div>
+    <div class="stat-label">universal syntax</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">∞</div>
+    <div class="stat-label">visual modules</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">Three layers.<br>One seamless tool.</h2>
+    <p class="section-sub">Onobase is engineered as three independent layers — each upgradeable without touching the others.</p>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-number">LAYER 01</div>
+        <div class="how-icon" style="background:rgba(0,229,176,0.1);">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#00E5B0" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+        </div>
+        <div class="how-card-title">Auto-Detection</div>
+        <div class="how-card-text">Onobase scans your machine and finds installed databases automatically. No manual driver hunting. No config files. It just connects.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-number">LAYER 02</div>
+        <div class="how-icon" style="background:rgba(0,102,255,0.1);">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0066FF" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <div class="how-card-title">Plugin Engine</div>
+        <div class="how-card-text">Each database type loads as an independent plugin — like the JVM loading class libraries. Update PostgreSQL support without touching MySQL. Hot-swappable, independently versioned.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-number">LAYER 03</div>
+        <div class="how-icon" style="background:rgba(123,79,255,0.1);">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#7B4FFF" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+        </div>
+        <div class="how-card-title">Visual Canvas</div>
+        <div class="how-card-text">Tables group into Modules — living objects with colour, relationships, and hierarchy. The canvas shows your entire data architecture at a glance, not a flat list.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="features-section">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Built for how developers<br>actually work.</h2>
+    <p class="section-sub">Every feature in Onobase exists to remove friction — not add it.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrap">🎨</div>
+        <div class="feature-title">Module Color Inheritance</div>
+        <div class="feature-text">Set a colour on a Module once. Every table header inside it inherits that colour automatically. Your architecture becomes instantly readable — no manual per-table styling.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">🔌</div>
+        <div class="feature-title">Independently Updatable Plugins</div>
+        <div class="feature-text">Each database engine is a plugin. When PostgreSQL releases a new version, only the PostgreSQL plugin updates. Your MySQL, SQL Server, and SQLite plugins are completely unaffected.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">✍️</div>
+        <div class="feature-title">Visual Query Builder</div>
+        <div class="feature-text">Drag columns onto the query canvas, set filters visually, join tables with a click. No SQL required. For power users, drop into the Monaco-based editor for full native SQL.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">🔗</div>
+        <div class="feature-title">Module Relationship Lines</div>
+        <div class="feature-text">Connect modules to each other with visible lines on the canvas — showing cross-module data dependencies the way an architect would draw them, not buried in a schema list.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">⚡</div>
+        <div class="feature-title">Universal Query Syntax</div>
+        <div class="feature-text">Write once. Onobase translates to the native dialect of your target database. No more remembering whether it's TOP, LIMIT, or ROWNUM. You write — the engine handles the rest.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">🔒</div>
+        <div class="feature-title">Secure Credential Storage</div>
+        <div class="feature-text">Connection credentials are stored in the OS native keychain — never in plaintext. Works fully offline. No database credentials ever leave your machine to a cloud server.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATABASES -->
+<section id="databases">
+  <div class="section-inner">
+    <div class="section-label">Database Coverage</div>
+    <h2 class="section-title">Five plugins.<br>The entire database world.</h2>
+    <p class="section-sub">Because most cloud databases are just PostgreSQL or MySQL underneath, five plugins cover virtually every database you'll ever encounter.</p>
+    <div class="plugins-grid">
+      <div class="plugin-card">
+        <span class="plugin-logo">🐘</span>
+        <div class="plugin-name">PostgreSQL</div>
+        <div class="plugin-covers">Supabase · Neon<br>CockroachDB · AWS RDS<br>Azure PG · Cloud SQL</div>
+        <span class="plugin-badge">v1.0 launch</span>
+      </div>
+      <div class="plugin-card">
+        <span class="plugin-logo">🐬</span>
+        <div class="plugin-name">MySQL</div>
+        <div class="plugin-covers">PlanetScale · TiDB<br>MariaDB · AWS RDS<br>Azure MySQL</div>
+        <span class="plugin-badge">v1.0 launch</span>
+      </div>
+      <div class="plugin-card">
+        <span class="plugin-logo">🪟</span>
+        <div class="plugin-name">SQL Server</div>
+        <div class="plugin-covers">Azure SQL · AWS RDS<br>On-premises<br>SQL Server 2016+</div>
+        <span class="plugin-badge">v1.0 launch</span>
+      </div>
+      <div class="plugin-card">
+        <span class="plugin-logo">🪶</span>
+        <div class="plugin-name">SQLite</div>
+        <div class="plugin-covers">Turso · Local files<br>Embedded DBs<br>Mobile apps</div>
+        <span class="plugin-badge">v1.0 launch</span>
+      </div>
+      <div class="plugin-card">
+        <span class="plugin-logo">🔴</span>
+        <div class="plugin-name">Oracle</div>
+        <div class="plugin-covers">Oracle Cloud<br>On-premises<br>Oracle 12c+</div>
+        <span class="plugin-badge">v1.1</span>
+      </div>
+    </div>
+    <div class="cloud-strip">
+      <span class="cloud-strip-label">CLOUD AUTO-COVERED →</span>
+      <div class="cloud-tags">
+        <span class="cloud-tag">Supabase</span>
+        <span class="cloud-tag">Neon</span>
+        <span class="cloud-tag">PlanetScale</span>
+        <span class="cloud-tag">CockroachDB</span>
+        <span class="cloud-tag">Turso</span>
+        <span class="cloud-tag">AWS RDS</span>
+        <span class="cloud-tag">Azure SQL</span>
+        <span class="cloud-tag">Google Cloud SQL</span>
+        <span class="cloud-tag">TiDB</span>
+        <span class="cloud-tag">MariaDB</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE SYSTEM -->
+<section style="background:var(--bg2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">Module System</div>
+    <h2 class="section-title">Your schema as a<br>living architecture.</h2>
+    <p class="section-sub">Modules are first-class objects. Set a colour once — every table inside inherits it. Collapse entire domains to a single header. See connections between modules at a glance.</p>
+    <div class="module-demo">
+      <div class="module-demo-bar">
+        <div class="mockup-dots">
+          <div class="mockup-dot dot-r"></div>
+          <div class="mockup-dot dot-y"></div>
+          <div class="mockup-dot dot-g"></div>
+        </div>
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-left:12px;">canvas view — ecommerce_platform</span>
+      </div>
+      <div class="module-demo-canvas">
+        <!-- Auth module -->
+        <div class="demo-module">
+          <div class="demo-module-head" style="background:rgba(0,229,176,0.12); color:#00E5B0;">
+            Auth &amp; Users
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#00E5B0;"></div>users</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#00E5B0;"></div>roles</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#00E5B0;"></div>permissions</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#00E5B0;"></div>sessions</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#00E5B0;"></div>oauth_tokens</div>
+        </div>
+        <!-- Billing module -->
+        <div class="demo-module">
+          <div class="demo-module-head" style="background:rgba(123,79,255,0.12); color:#7B4FFF;">
+            Billing
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#7B4FFF;"></div>orders</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#7B4FFF;"></div>invoices</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#7B4FFF;"></div>payments</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#7B4FFF;"></div>subscriptions</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#7B4FFF;"></div>promo_codes</div>
+        </div>
+        <!-- Products module -->
+        <div class="demo-module">
+          <div class="demo-module-head" style="background:rgba(255,107,43,0.12); color:#FF6B2B;">
+            Products
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#FF6B2B;"></div>products</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#FF6B2B;"></div>categories</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#FF6B2B;"></div>inventory</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#FF6B2B;"></div>product_images</div>
+          <div class="demo-table-name"><div class="table-dot" style="background:#FF6B2B;"></div>reviews</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="pricing-section">
+  <div class="section-inner">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, honest pricing.<br>No subscription surprises.</h2>
+    <p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, no usage caps, no forced annual plans.</p>
+    <div class="pricing-grid">
+      <!-- Community -->
+      <div class="price-card">
+        <div class="price-tier">Community</div>
+        <div class="price-amount">Free</div>
+        <div class="price-period">forever, no card required</div>
+        <hr class="price-divider">
+        <ul class="price-features">
+          <li>PostgreSQL + MySQL plugins</li>
+          <li>Visual canvas with modules</li>
+          <li>SQL editor with autocomplete</li>
+          <li>Up to 3 saved connections</li>
+          <li>Results export (CSV)</li>
+        </ul>
+        <a href="#early" class="btn-price">Download Free</a>
+      </div>
+      <!-- Pro -->
+      <div class="price-card featured">
+        <div class="price-tier">Pro</div>
+        <div class="price-amount">$79<span></span></div>
+        <div class="price-period">one-time purchase · or $49/yr</div>
+        <hr class="price-divider">
+        <ul class="price-features">
+          <li>All 5 database plugins</li>
+          <li>Full module system + colour inheritance</li>
+          <li>Visual query builder</li>
+          <li>Unlimited saved connections</li>
+          <li>Export CSV, JSON, Excel</li>
+          <li>Query history + saved queries</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#early" class="btn-price featured-btn">Get Pro Access</a>
+      </div>
+      <!-- Team -->
+      <div class="price-card">
+        <div class="price-tier">Team</div>
+        <div class="price-amount">$99<span>/user</span></div>
+        <div class="price-period">per year · minimum 2 seats</div>
+        <hr class="price-divider">
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>Cloud sync for connections &amp; layouts</li>
+          <li>Shared module configurations</li>
+          <li>Team query library</li>
+          <li>Licence management dashboard</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="#early" class="btn-price">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EARLY ACCESS -->
+<section id="early" class="early-section">
+  <div class="early-glow"></div>
+  <div class="early-inner">
+    <div class="section-label" style="text-align:center;">Early Access</div>
+    <h2 class="section-title" style="font-size:clamp(28px,4vw,44px);">Be first to use Onobase.</h2>
+    <p style="font-size:16px; color:var(--muted2); line-height:1.7; margin-top:16px;">Join the early access list. You'll be notified when the beta opens — and early access members lock in Pro pricing for life.</p>
+    <div class="email-form">
+      <input class="email-input" type="email" placeholder="your@email.com">
+      <button class="email-btn">Join Waitlist</button>
+    </div>
+    <p class="early-note">No spam. No BS. Just one email when we launch.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="logo-mark" style="width:28px;height:28px;font-size:12px;">1</div>
+    <span class="logo-text" style="font-size:15px;">Onobase</span>
+    <span class="footer-copy" style="margin-left:8px;">© 2026 Obnet Pty Ltd · onobase.com</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Docs</a></li>
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <span class="footer-obnet">A product by <span>Obnet Pty Ltd</span> · Melbourne, Australia</span>
+</footer>
+
+<script>
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Waitlist form
+  document.querySelector('.email-btn').addEventListener('click', () => {
+    const input = document.querySelector('.email-input');
+    if (input.value && input.value.includes('@')) {
+      input.value = '';
+      input.placeholder = '✓ You\'re on the list!';
+      input.style.borderColor = 'var(--accent)';
+      input.style.color = 'var(--accent)';
+    } else {
+      input.style.borderColor = '#FF5F57';
+      input.placeholder = 'Enter a valid email';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.placeholder = 'your@email.com';
+      }, 2000);
+    }
+  });
+
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.borderBottomColor = window.scrollY > 20
+      ? 'rgba(255,255,255,0.1)'
+      : 'rgba(255,255,255,0.07)';
+  });
+</script>
+</body>
+</html>
