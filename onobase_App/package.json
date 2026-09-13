@@ -1,0 +1,95 @@
+{
+  "name": "onobase-app",
+  "version": "0.1.0",
+  "description": "Onobase — Universal Database IDE",
+  "main": "electron-dist/main.js",
+  "scripts": {
+    "dev:react": "vite",
+    "dev:electron": "tsc -p tsconfig.electron.json && tsc -p tsconfig.preload.json && cross-env NODE_ENV=development electron .",
+    "dev": "concurrently -k \"npm run dev:react\" \"wait-on http://localhost:5173 && npm run dev:electron\"",
+    "build:react": "vite build",
+    "build:electron": "tsc -p tsconfig.electron.json && tsc -p tsconfig.preload.json",
+    "build": "npm run build:react && npm run build:electron && electron-builder",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.9.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@xyflow/react": "^12.10.1",
+    "ag-grid-community": "^35.1.0",
+    "ag-grid-react": "^35.1.0",
+    "better-sqlite3": "^12.8.0",
+    "date-fns": "^4.1.0",
+    "exceljs": "^4.4.0",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^0.577.0",
+    "mssql": "^12.2.1",
+    "mysql2": "^3.20.0",
+    "papaparse": "^5.5.3",
+    "pg": "^8.20.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^3.8.0",
+    "simple-git": "^3.33.0",
+    "sql-formatter": "^15.7.2",
+    "ssh2": "^1.17.0",
+    "tailwindcss": "^3.4.19",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/mssql": "^9.1.9",
+    "@types/papaparse": "^5.5.2",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "@types/ssh2": "^1.15.5",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.27",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^41.0.3",
+    "electron-builder": "^26.8.1",
+    "postcss": "^8.5.8",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.21",
+    "wait-on": "^9.0.4"
+  },
+  "build": {
+    "appId": "com.obnet.onobase",
+    "productName": "Onobase",
+    "copyright": "Copyright © 2026 Obnet Pty Ltd",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron-dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [],
+    "win": {
+      "target": "nsis",
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Onobase"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "public/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Development"
+    }
+  }
+}

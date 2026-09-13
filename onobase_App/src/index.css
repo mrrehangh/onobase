@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Reset ───────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design tokens ───────────────────────────────────────────────────── */
+:root {
+  --bg-primary:     #080C12;
+  --bg-glass:       rgba(13, 17, 23, 0.80);
+  --bg-glass-hover: rgba(22, 27, 34, 0.90);
+  --bg-surface:     rgba(30, 41, 59, 0.60);
+  --bg-card:        rgba(22, 27, 34, 0.85);
+
+  --border:         rgba(255, 255, 255, 0.08);
+  --border-bright:  rgba(255, 255, 255, 0.15);
+  --border-accent:  rgba(0, 229, 176, 0.35);
+
+  --accent:         #00E5B0;
+  --accent-dim:     rgba(0, 229, 176, 0.15);
+  --accent-glow:    rgba(0, 229, 176, 0.20);
+
+  --text-primary:   #E6EDF3;
+  --text-secondary: #8B949E;
+  --text-mono:      #C9D1D9;
+
+  --font-heading:   'Syne', system-ui, sans-serif;
+  --font-body:      'Inter', system-ui, sans-serif;
+  --font-mono:      'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────── */
+html, body, #root { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.20); }
+
+/* ── Glass utilities ─────────────────────────────────────────────────── */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* ── React Flow overrides ────────────────────────────────────────────── */
+.react-flow__controls {
+  background: var(--bg-glass) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+}
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  fill: var(--text-secondary) !important;
+  width: 26px !important; height: 26px !important;
+}
+.react-flow__controls-button:hover {
+  background: rgba(255,255,255,0.05) !important;
+  fill: var(--accent) !important;
+}
+.react-flow__controls-button:last-child { border-bottom: none !important; }
+
+.react-flow__minimap {
+  background: var(--bg-glass) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+}
+
+/* ── Animations ──────────────────────────────────────────────────────── */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--accent-glow); }
+  50%       { box-shadow: 0 0 24px var(--accent-glow), 0 0 48px rgba(0,229,176,0.08); }
+}
+@keyframes blink { 50% { opacity: 0.4; } }
+
+/* ── Onobase canvas texture background ───────────────────────────────── */
+.onobase-texture-bg {
+  background-color: #080C12;
+  background-image:
+    linear-gradient(
+      rgba(0, 229, 176, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 229, 176, 0.03) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(0, 80, 160, 0.15) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(80, 0, 120, 0.12) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 60% 80%,
+      rgba(0, 100, 120, 0.12) 0%,
+      transparent 50%
+    );
+  background-size:
+    32px 32px,
+    32px 32px,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+}
+
+/* Embossed tile overlay using pseudo-element */
+.onobase-texture-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='16' height='16' fill='rgba(255,255,255,0.012)'/%3E%3Crect x='16' y='16' width='16' height='16' fill='rgba(255,255,255,0.012)'/%3E%3Crect x='0' y='0' width='16' height='16' fill='none' stroke='rgba(255,255,255,0.025)' stroke-width='0.5'/%3E%3Crect x='16' y='0' width='16' height='16' fill='none' stroke='rgba(255,255,255,0.015)' stroke-width='0.5'/%3E%3C/svg%3E");
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* "ON" watermark */
+.onobase-watermark {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  font-size: 120px;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  color: rgba(0, 229, 176, 0.025);
+  letter-spacing: -8px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}

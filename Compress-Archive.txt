@@ -1,0 +1,1 @@
+Compress-Archive -Path src, electron -DestinationPath onobase-source.zip
