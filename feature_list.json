@@ -1,0 +1,76 @@
+{
+  "$comment": [
+    "Erudite feature list. Written in Phase 3, confirmed at Gate 3.",
+    "Copy to <project>\\feature_list.json.",
+    "",
+    "APPEND ONLY. Never edit an id, category, description or steps once written.",
+    "Never delete a feature. The ONLY permitted change is passes false -> true.",
+    "Flip passes only when evidence.command was run and evidence.output holds",
+    "what it actually printed. RULES.md 7-12.",
+    "",
+    "FAILURES.md F9: thirteen of twenty-two progress rows were found wrong",
+    "because they were ticked from recollection of having done the work.",
+    "FAILURES.md F8: a green tick from a command that inspected zero files.",
+    "",
+    "If a feature turns out to be wrong, add a NEW one and leave the old one",
+    "failing. A passing count that drops is a failure, not a pass.",
+    "",
+    "Every feature is END-TO-END and USER-VISIBLE - something a person can do,",
+    "screen to database and back. Not a layer. Not 'create the users table'.",
+    "Every feature is written so it can be proven FALSE.",
+    "",
+    "evidence_file names the file under <project>\\evidence\\ that backs the tick,",
+    "e.g. \"evidence\\\\F002.txt\". verify-gate.ps1 does NOT read it - it reads",
+    "evidence.command and evidence.output - so it changes no behaviour. It is here",
+    "so a tick can be traced to a file by machine and not only by memory. Leave it",
+    "as an empty string until the feature is proven.",
+    "",
+    "category is one of: auth, data, ui, reporting, admin, security, infra"
+  ],
+  "project": "Onobase",
+  "generated": "09-20-2026",
+  "architecture_approved": "not yet - Gate 2 has not been reached as of 09-20-2026",
+  "features": [
+    {
+      "id": "F001",
+      "category": "infra",
+      "description": "The check command named in ARCHITECTURE.md §5 fails on deliberately broken code and passes on good code.",
+      "steps": [
+        "Break one file the check should cover - delete a variable something else reads.",
+        "Run the check command from its declared working directory.",
+        "Confirm it exits non-zero AND names the file and the line.",
+        "Revert the break.",
+        "Run it again and confirm it exits zero."
+      ],
+      "passes": false,
+      "evidence": { "command": "", "output": "", "run_by": "", "run_at": "" },
+      "evidence_file": ""
+    },
+    {
+      "id": "F002",
+      "category": "security",
+      "description": "hooks/block-destructive.ps1 refuses a force push and a deploy command, and stays silent on a normal push.",
+      "steps": [
+        "Run block-destructive.ps1 -Command 'git push origin main' - expect NO output, exit 0.",
+        "Run block-destructive.ps1 -Command 'git push --force origin main' - expect a reason, exit 1.",
+        "Run block-destructive.ps1 -Command 'vercel deploy --prod' - expect a reason, exit 1."
+      ],
+      "passes": false,
+      "evidence": { "command": "", "output": "", "run_by": "", "run_at": "" },
+      "evidence_file": ""
+    },
+    {
+      "id": "F003",
+      "category": "<auth | data | ui | reporting | admin | security | infra>",
+      "description": "<One thing a USER can do, end to end. Written so it can be proven false.>",
+      "steps": [
+        "<The exact command, or the exact click path.>",
+        "<What must appear on screen or in the output for this to pass.>",
+        "<What would make it fail.>"
+      ],
+      "passes": false,
+      "evidence": { "command": "", "output": "", "run_by": "", "run_at": "" },
+      "evidence_file": ""
+    }
+  ]
+}

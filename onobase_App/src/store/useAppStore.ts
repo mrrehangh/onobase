@@ -128,10 +128,6 @@ interface AppStore {
   removeConnection: (id: string) => void
 }
 
-// ── Counter for unique query tab ids ──────────────────────────────────────────
-
-let queryTabCounter = 0
-
 // ── Store ──────────────────────────────────────────────────────────────────────
 
 export const useAppStore = create<AppStore>((set) => ({

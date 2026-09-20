@@ -7,6 +7,10 @@ import '@xyflow/react/dist/style.css'
 
 interface PlanNode {
   'Node Type': string
+  // PostgreSQL's EXPLAIN (FORMAT JSON) returns [{ "Plan": { ... } }]. Declared
+  // here so the root lookup below is typed, instead of falling through the
+  // index signature and arriving as unknown.
+  Plan?: PlanNode
   'Startup Cost'?: number
   'Total Cost'?: number
   'Plan Rows'?: number

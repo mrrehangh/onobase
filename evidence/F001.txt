@@ -1,0 +1,216 @@
+================================================================================
+Onobase - evidence for F001
+The check command fails on deliberately broken code and passes on good code.
+================================================================================
+
+FEATURE      F001  [infra]
+DATE         09-20-2026
+RUN BY       Rehan, on his own Windows machine, Windows PowerShell 5.1
+RECORDED BY  Cowork, from the results Rehan pasted back
+PROJECT      D:\Data\Folders\My_AI_Projects\OnoBase
+CHECK        npm run typecheck, run in D:\Data\Folders\My_AI_Projects\OnoBase\onobase_App
+
+THE CHECK COMMAND, IN FULL
+  It is defined in onobase_App\package.json and added on 09-20-2026 during docking:
+
+    tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.electron.json --noEmit
+    && tsc -p tsconfig.preload.json --noEmit && echo typecheck: 0 errors
+
+  Three separate TypeScript passes, then an echo. The three configs are named one
+  by one on purpose. onobase_App\tsconfig.json holds "files": [] and two
+  references, so pointing the check at IT would compile ZERO files and exit 0 on
+  any code at all. That is FAILURES.md F8 - five files reported clean by a command
+  that compiled none of them - sitting in the repository waiting to be stepped on.
+
+  The trailing echo exists because tsc --noEmit prints nothing when it passes, and
+  pre-commit.ps1 treats a command that exits 0 having printed nothing as suspicious
+  and refuses the commit. Rehan ruled on 09-20-2026 that the check must SPEAK:
+  $SilentCheckIsExpected stays $false and the echo is what makes silence meaningful.
+
+--------------------------------------------------------------------------------
+TEST 1 - THE CHECK PASSES ON GOOD CODE
+--------------------------------------------------------------------------------
+COMMAND
+  cd /d D:\Data\Folders\My_AI_Projects\OnoBase\onobase_App
+  npm run typecheck
+
+OUTPUT
+  typecheck: 0 errors
+
+  All THREE stages ran - app, electron and preload.
+
+  This matters more than it looks. On the first run of the day the app stage
+  failed, so the && chain stopped there and the electron and preload stages were
+  never reached at all. They had never been exercised through this check before.
+  This run is the first time all three have run end to end.
+
+  It required the ten baseline type errors to be fixed first - see the section
+  below. Those were pre-existing faults in Onobase, not anything docking created.
+
+--------------------------------------------------------------------------------
+TEST 2 - THE CHECK FAILS ON DELIBERATELY BROKEN CODE, AND NAMES FILE AND LINE
+--------------------------------------------------------------------------------
+THE BREAK
+  File: D:\Data\Folders\My_AI_Projects\OnoBase\onobase_App\src\utils\colors.ts
+  Line 3, changed from
+
+    export const MODULE_COLORS: ModuleColor[] = [
+
+  to
+
+    export const MODULE_COLORS_BROKEN: ModuleColor[] = [
+
+  One line. Nothing else touched. This is the shape DOCKING.md step 4 asks for -
+  delete or rename a variable that something else reads - because it breaks code in
+  another file as well as in its own, so the check has to follow a reference across
+  a file boundary to find it.
+
+COMMAND
+  cd /d D:\Data\Folders\My_AI_Projects\OnoBase\onobase_App
+  npm run typecheck
+
+OUTPUT
+  10 errors in 2 files.
+  The files and lines named were:
+      src\App.tsx           line 31, line 160, line 522
+      src\utils\colors.ts   line 50, line 55
+  NO "typecheck: 0 errors" line appeared. The && chain stopped at the first stage.
+
+  All three things DOCKING.md step 4 requires were seen:
+    a. it exited non-zero - proven by the absence of the echo, which only runs
+       when every stage before it succeeds;
+    b. it NAMED FILES AND LINE NUMBERS, in both files, not a vague summary;
+    c. it followed the reference out of colors.ts into App.tsx, which is the part
+       that proves the check is really reading the project and not one file.
+
+--------------------------------------------------------------------------------
+TEST 3 - THE BREAK WAS UNDONE AND THE CHECK WENT GREEN AGAIN
+--------------------------------------------------------------------------------
+  Line 3 of colors.ts restored to
+
+    export const MODULE_COLORS: ModuleColor[] = [
+
+COMMAND
+  cd /d D:\Data\Folders\My_AI_Projects\OnoBase\onobase_App
+  npm run typecheck
+
+OUTPUT
+  typecheck: 0 errors
+
+  A check that only ever says no is as useless as one that only ever says yes.
+  Both directions were seen, in that order, on the same machine, the same day.
+
+--------------------------------------------------------------------------------
+TEST 4 - GIT WAS POINTED AT THE HOOKS FOLDER
+--------------------------------------------------------------------------------
+COMMAND
+  cd /d D:\Data\Folders\My_AI_Projects\OnoBase
+  git config core.hooksPath .githooks
+
+CONFIRMED BY
+  git config --get core.hooksPath
+
+OUTPUT
+  .githooks
+
+  Until this was set, the hook files existed in .githooks\ and git was not calling
+  them. A hook nobody has pointed git at is a guard that does not exist.
+
+--------------------------------------------------------------------------------
+TEST 5 - THE PRE-COMMIT HOOK REFUSED A COMMIT OF BROKEN CODE
+--------------------------------------------------------------------------------
+  This is the test that matters most, and it is the one that is easiest to skip.
+  Tests 1 to 3 prove the check command works when a human runs it. Test 5 proves
+  it runs when NOBODY REMEMBERS TO RUN IT. DOCKING.md 5c is explicit about why the
+  distinction is kept: block-destructive.ps1 and verify-gate.ps1 are conventions -
+  they run because the agent chose to call them. The pre-commit hook is different.
+  Git runs it, whether anyone remembered or not.
+
+SETUP
+  The same one-line break put back into colors.ts line 3.
+
+COMMAND
+  cd /d D:\Data\Folders\My_AI_Projects\OnoBase
+  git add -A
+  git commit -m "<the test commit message>"
+
+OUTPUT
+  pre-commit: FAILED (exit 2) - npm run typecheck
+  ... the 10 errors listed ...
+  Commit refused.
+
+  NOTHING WAS COMMITTED. --no-verify was not used, and must never be used: it skips
+  this hook entirely, which is the only thing standing between a broken build and a
+  commit.
+
+  ABOUT THE NUMBER IN THAT HEADER LINE. "(exit 2)" is the exit code of the CHECK
+  COMMAND - npm, carrying tsc's - and not the hook's own exit code. Erudite has met
+  this exact confusion before: evidence\F005.txt records a header reading
+  "pre-commit: FAILED (exit -4058) - npm run typecheck", where -4058 was npm's errno
+  and the hook itself returned 1. pre-commit.ps1's own codes are 0 pass, 1 check
+  failed, 2 misconfigured, and this was plainly a check failure and not a
+  misconfiguration - the check ran, produced its errors, and they were printed.
+  ⚠ THE HOOK'S OWN EXIT CODE WAS NOT CAPTURED on this run. See the section below.
+
+--------------------------------------------------------------------------------
+THE TEN BASELINE TYPE ERRORS THAT HAD TO BE FIXED FIRST
+--------------------------------------------------------------------------------
+  These were found by the first run of npm run typecheck on 09-20-2026, before any
+  of the tests above could be done. They were pre-existing faults in Onobase. None
+  was caused by docking, and none changes how the app behaves.
+
+   1. src\App.tsx:286              'isQueryActive' declared and never read - removed.
+   2. src\App.tsx:285              'activeTab' became unused once 1 was removed - removed by Rehan.
+   3. src\store\useAppStore.ts:133 'queryTabCounter' declared, set to 0, never read
+                                   and never incremented - removed with its comment banner.
+   4. src\components\DiagramView.tsx:184  'nodes' never read - binding dropped, hook kept.
+   5. src\components\DiagramView.tsx:185  'edges' never read - binding dropped, hook kept.
+                                   ReactFlow is given memoNodes / memoEdges, not these.
+   6. src\components\ExecutionPlan.tsx:123 argument '{}' not assignable to 'PlanNode' -
+                                   fixed properly by declaring  Plan?: PlanNode  on the
+                                   PlanNode interface. The key was falling through the
+                                   catch-all index signature and arriving as unknown.
+                                   No 'any' and no ts-ignore was used. PostgreSQL's
+                                   EXPLAIN (FORMAT JSON) really does return
+                                   [{ "Plan": { ... } }], so the declaration is correct
+                                   as well as convenient.
+   7. src\components\SchemaComparison.tsx:52 'bColor' and 'setBColor' never read -
+                                   the whole useState line removed.
+   8. src\components\TableDesigner.tsx:103 'T' declared and never read, inside an
+                                   'infer T' in a conditional type that always resolved
+                                   to unknown anyway - annotation simplified to unknown.
+   9. src\components\TableDesigner.tsx:183 AgGridReact does not accept 'style' - prop removed.
+  10. src\components\ActivityMonitor.tsx:211 AgGridReact does not accept 'style' - prop
+                                   removed, along with the DARK_GRID constant it used.
+
+  WHY REMOVING THOSE TWO 'style' PROPS CHANGED NOTHING ON SCREEN, checked rather than
+  assumed: 'style' is not part of AG Grid's React API. The props are containerStyle and
+  className - read from
+  node_modules\ag-grid-react\dist\types\src\shared\interfaces.d.ts. The shipped runtime,
+  node_modules\ag-grid-react\dist\package\index.esm.mjs, contains ZERO occurrences of
+  props.style. The prop was being silently ignored. What sizes both grids is the wrapper
+  div around them, which carries flex: 1 and overflow: hidden and was not touched. In
+  ActivityMonitor there is a second proof beside it: the Sessions grid twenty lines above
+  never had the prop, sits in the same wrapper, and renders correctly.
+
+--------------------------------------------------------------------------------
+WHAT THIS FILE DOES NOT PROVE
+--------------------------------------------------------------------------------
+  1. THE HOOK'S OWN EXIT CODE ON TEST 5 WAS NOT CAPTURED. What was seen is that the
+     commit was refused and nothing was committed, which is the behaviour that
+     matters. Whether pre-commit.ps1 returned 1 (check failed) or 2 (misconfigured)
+     was not read off the console. It is almost certainly 1, on the F005 precedent
+     above, but almost certainly is not proof. Running  echo %ERRORLEVEL%  straight
+     after a refused commit would settle it.
+  2. THE PASSING COMMIT HAS NOT BEEN MADE YET. DOCKING.md 5c asks for the hook to be
+     proven in BOTH directions - refused on broken code, then silent and successful
+     on good code. Only the refusal has been seen. Until a commit succeeds with the
+     check passing, it is not known that the hook lets good work through.
+  3. NOTHING WAS RUN AGAINST ANY DATABASE. No Onobase connection was opened, and no
+     part of the app was started. This is a compile-time check only.
+  4. THE APP WAS NOT RUN. npm run dev was not executed. Code that type-checks can
+     still be wrong at run time, and none of the ten fixes above was watched working.
+  5. THESE RESULTS ARE RECORDED FROM WHAT REHAN PASTED BACK, not captured by Cowork.
+     Cowork cannot run npm or the check on this machine. The full console text of the
+     10 errors was summarised by Rehan as file and line numbers rather than pasted in
+     full, so this file records the lines named and not every error message verbatim.

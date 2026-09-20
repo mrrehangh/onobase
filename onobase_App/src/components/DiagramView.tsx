@@ -181,8 +181,11 @@ export default function DiagramView({ schema, connected }: Props) {
     return { initialNodes: nodes, initialEdges: edges }
   }, [schema])
 
-  const [nodes, , onNodesChange] = useNodesState(initialNodes)
-  const [edges, , onEdgesChange] = useEdgesState(initialEdges)
+  // The rendered nodes and edges come from memoNodes / memoEdges below, so the
+  // state values these hooks return are not bound. The hooks themselves still
+  // run - they are what produce onNodesChange / onEdgesChange.
+  const [, , onNodesChange] = useNodesState(initialNodes)
+  const [, , onEdgesChange] = useEdgesState(initialEdges)
 
   // Re-initialise when schema changes
   const memoNodes = useMemo(() => initialNodes, [initialNodes])

@@ -10,7 +10,8 @@
     "build:react": "vite build",
     "build:electron": "tsc -p tsconfig.electron.json && tsc -p tsconfig.preload.json",
     "build": "npm run build:react && npm run build:electron && electron-builder",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.electron.json --noEmit && tsc -p tsconfig.preload.json --noEmit && echo typecheck: 0 errors"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",

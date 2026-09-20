@@ -282,8 +282,7 @@ export default function App() {
 
   // ── Derived tab state ──────────────────────────────────────────────────────
   const hasTabs       = tabs.length > 0
-  const activeTab     = tabs.find(t => t.id === activeTabId) ?? null
-  const isQueryActive = activeTab?.type === 'query'
+
   const noTabs        = !hasTabs  // canvas visible
 
   // ── Toolbar button style ───────────────────────────────────────────────────

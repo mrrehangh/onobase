@@ -100,7 +100,7 @@ export default function TableDesigner({ schema, table }: Props) {
     setRows(r => [...r, makeRow()])
   }, [])
 
-  const deleteSelected = useCallback((api: ReturnType<GridReadyEvent['api']['getSelectedRows']> extends (infer T)[] ? never : unknown) => {
+  const deleteSelected = useCallback((api: unknown) => {
     void api
   }, [])
   void deleteSelected
@@ -180,7 +180,6 @@ export default function TableDesigner({ schema, table }: Props) {
           <AgGridReact
             rowData={rows}
             columnDefs={COLUMN_DEFS}
-            style={{ height: '100%', width: '100%' }}
             rowSelection="single"
             singleClickEdit
             onGridReady={onGridReady}

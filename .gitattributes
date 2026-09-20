@@ -1,0 +1,8 @@
+# Onobase — line endings
+# Added 09-20-2026 when docking with Erudite.
+# The git pre-commit shim MUST keep LF line endings and no byte-order mark.
+# Git runs it through /bin/sh; CRLF in it makes every commit fail with a
+# message that does not mention line endings, which is how an afternoon
+# disappears. Erudite\DOCKING.md step 5c.
+
+.githooks/pre-commit text eol=lf

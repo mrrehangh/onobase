@@ -49,7 +49,6 @@ export default function SchemaComparison({ connectionA, onOpenScript }: Props) {
   const [bPass, setBPass]       = useState('')
   const [bDb, setBDb]           = useState('')
   const [bType, setBType]       = useState<DbType>('postgresql')
-  const [bColor, setBColor]     = useState('#3B82F6')
   const [bConnected, setBConnected] = useState(false)
   const [bName, setBName]       = useState('')
   const [connecting, setConnecting] = useState(false)

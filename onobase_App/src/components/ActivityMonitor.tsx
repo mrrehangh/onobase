@@ -69,8 +69,6 @@ const TABLE_COLS: ColDef[] = [
     valueFormatter: p => p.value ? new Date(p.value).toLocaleString() : '—' },
 ]
 
-const DARK_GRID: React.CSSProperties = { height: '100%', width: '100%' }
-
 export default function ActivityMonitor() {
   const [activeTab, setActiveTab] = useState<'sessions' | 'tables'>('sessions')
   const [sessions, setSessions]   = useState<Session[]>([])
@@ -208,7 +206,6 @@ export default function ActivityMonitor() {
           <AgGridReact
             rowData={tableStats}
             columnDefs={TABLE_COLS}
-            style={DARK_GRID}
             onGridReady={onGridReady}
             defaultColDef={{ resizable: true, sortable: true, filter: true }}
           />
