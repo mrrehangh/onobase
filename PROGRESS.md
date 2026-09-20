@@ -18,7 +18,7 @@ ceiling below 100%, exactly as in Erudite itself.
 | | |
 |---|---|
 | Last updated | 09-20-2026 by Cowork |
-| Phase | DOCKING — step 4 and step 5c both PROVEN; Gates 1, 2 and 3 not yet reached |
+| Phase | DOCKING — COMPLETE through step 5c, both directions proven, committed as `7c8e26e`; Gates 1, 2 and 3 not yet reached |
 | Features passing | 0 of 3 (template copy, not the real list). F001 is proven but NOT yet flipped — the flip waits on a successful commit. |
 
 ---
@@ -39,6 +39,7 @@ a command was actually run against.
 | **THE CHECK COMMAND IS TRUSTED — it fails on broken code and passes on good code.** This is DOCKING.md step 4, the one it says not to skip | `src\utils\colors.ts` line 3 renamed to `MODULE_COLORS_BROKEN`: **10 errors in 2 files**, naming `src\App.tsx` lines 31, 160 and 522 and `src\utils\colors.ts` lines 50 and 55, and **no `typecheck: 0 errors` line**. It followed the reference out of one file into another, which is what proves it is reading the project rather than one file. Break undone: `typecheck: 0 errors`. **All three stages ran — app, electron and preload.** The electron and preload stages had never been reached before, because the app stage had always failed first and stopped the chain | `npm run typecheck` in `D:\Data\Folders\My_AI_Projects\OnoBase\onobase_App`, run by Rehan, Windows PowerShell 5.1. Recorded at `evidence\F001.txt` | 09-20-2026 |
 | **GIT IS POINTED AT THE HOOKS FOLDER** | `git config --get core.hooksPath` printed `.githooks`. Until this was set the hook files existed and git was not calling them — a guard nobody pointed git at does not exist | `git config core.hooksPath .githooks`, run by Rehan | 09-20-2026 |
 | **THE PRE-COMMIT HOOK REFUSED A COMMIT OF BROKEN CODE.** This is the half of DOCKING.md 5c that matters most: the other two guards run because someone chose to call them, and this one runs whether anyone remembered or not | With the same one-line break in place, `git commit` printed `pre-commit: FAILED (exit 2) - npm run typecheck`, listed the 10 errors, and printed `Commit refused.` **Nothing was committed, and `--no-verify` was not used.** ⚠ The `(exit 2)` in that header is the CHECK COMMAND'S exit code carried up by npm, not the hook's own — Erudite met the same confusion in `evidence\F005.txt`, where `-4058` was npm's errno and the hook returned 1 | `git add -A` then `git commit`, run by Rehan. Recorded at `evidence\F001.txt` | 09-20-2026 |
+| **THE PRE-COMMIT HOOK ALLOWED A CLEAN COMMIT — so DOCKING.md 5c is now proven in BOTH directions.** A hook that has only ever been seen saying no is not yet trustworthy; the refusal only counts once the pass has been seen beside it | With the break undone, `git commit` ran the hook, the hook ran `npm run typecheck`, the check passed and the commit was **ALLOWED**. **Commit `7c8e26e` on `dev`**, pushed to the remote. `--no-verify` was not used. Both directions were seen on the same day, on the same machine, against the same one-line break | `git add -A`, `git commit`, `git push origin dev`, run by Rehan. Recorded at `evidence\F001.txt` | 09-20-2026 |
 | **TEN PRE-EXISTING TYPE ERRORS IN ONOBASE WERE FOUND AND FIXED.** None was caused by docking; the check found faults that were already there. Each fix is the smallest change that leaves behaviour untouched | 1. `App.tsx:286` `isQueryActive` never read — removed. 2. `App.tsx:285` `activeTab`, unused once the first was gone — removed by Rehan. 3. `useAppStore.ts:133` `queryTabCounter` set to 0, never read, never incremented — removed. 4 and 5. `DiagramView.tsx:184` and `:185` `nodes` and `edges` never read — bindings dropped, hooks kept, because ReactFlow is given `memoNodes`/`memoEdges`. 6. `ExecutionPlan.tsx:123` `'{}' not assignable to 'PlanNode'` — fixed by declaring `Plan?: PlanNode` on the interface, which is also what PostgreSQL's `EXPLAIN (FORMAT JSON)` genuinely returns; **no `any`, no ts-ignore**. 7. `SchemaComparison.tsx:52` `bColor`/`setBColor` never read — line removed. 8. `TableDesigner.tsx:103` `'T'` never read inside an `infer T` that always resolved to `unknown` — annotation simplified. 9 and 10. `TableDesigner.tsx:183` and `ActivityMonitor.tsx:211` AgGridReact does not accept `style` — **the prop was never read by ag-grid-react at run time** (checked: `props.style` appears zero times in its shipped runtime; the supported props are `containerStyle` and `className`), so removing it changed nothing on screen. The wrapper div with `flex: 1` is what sizes both grids | `npm run typecheck`, run by Rehan | 09-20-2026 |
 
 ---
@@ -50,7 +51,7 @@ than finished — and abandoned work looks identical to finished work a week lat
 
 | Feature | On which step | What is blocking it |
 |---|---|---|
-| F001 | **Proven. Waiting only on the flip.** | Nothing about the proof. `evidence\F001.txt` is written and holds both directions. The flip to `passes: true` waits on two things in order: the docking commit must succeed, and then `verify-gate.ps1` must return EXIT=0 with `-Evidence evidence\F001.txt` (RULES.md 9-10a). Cowork cannot do either from its workspace — see the blocker under Waiting on Rehan. |
+| F001 | **Proven. The flip is prepared and waiting on the gate.** | Nothing about the proof. `evidence\F001.txt` holds all six tests, both hook directions included. `feature_list.proposed.json` is written and holds the flip, and nothing but F001 differs from the real file. It becomes real only if `verify-gate.ps1` returns EXIT=0 with `-Evidence evidence\F001.txt` (RULES.md 9-10a). Cowork cannot run PowerShell or git here — see the blocker under Waiting on Rehan. |
 
 ---
 
@@ -62,7 +63,6 @@ In order. The top row is what gets picked up, and nothing else starts first.
 |---:|---|---|---|
 | 1 | F001 | infra | Nothing else can be trusted until the check command is proven to fail on broken code. DOCKING.md step 4 calls it out by name and says do not skip it. |
 | 2 | F002 | security | The gate scripts are already installed globally through the OpenCode plugin, so this is a short proof run against `Erudite\hooks\block-destructive.ps1`. |
-| 2a | — | — | **Finish DOCKING.md 5c: the hook has only been proven in ONE direction.** The refusal was seen; a successful commit with the check passing has not been. The docking commit is that test. |
 | 3 | — | — | Onobase's own first real feature is drafted but NOT written into the list. It is "Select Top 1000 Rows" from the right-click menu on a table in the object tree. It waits for Gate 3. |
 
 ---
@@ -82,7 +82,6 @@ Everything Onobase has, is here. Nothing has been proven under Erudite yet.
 
 | Feature | BROKEN or UNVERIFIED | What is actually known | What would settle it |
 |---|---|---|---|
-| The pre-commit hook — the PASSING direction | UNVERIFIED | The refusal is proven and is in Done. The other half is not: it is not known that the hook lets good work through silently. DOCKING.md 5c asks for both. | The docking commit. If it goes through with the check passing and no hook complaint, this is settled. |
 | The hook's OWN exit code on a refusal | UNVERIFIED | The console showed `pre-commit: FAILED (exit 2) - npm run typecheck`, but that number is the check command's, carried up by npm. `pre-commit.ps1` returns 1 for a failed check and 2 for a misconfiguration, and which one it returned was not read. It was plainly a check failure — the check ran and printed its errors — but plainly is not proof. | `echo %ERRORLEVEL%` immediately after a refused commit. |
 | PostgreSQL support | UNVERIFIED | The driver `pg` is imported in `electron\main.ts` and the connect, query, schema, scripting, explain, activity and health paths all branch on it. Nobody has watched it work under Erudite. | Connect to a real PostgreSQL database and read a table back. |
 | MySQL, SQL Server and SQLite support | UNVERIFIED | All three drivers are imported and branched on in `electron\main.ts`. But `src\components\ConnectDialog.tsx` line 225 reads `canLoad = ... && dbType === 'postgresql'`, which switches the Load-databases button OFF for all three. Whether a connection completes without it is NOT KNOWN. | Connect to one of each and read a table back. |
@@ -110,8 +109,7 @@ The same limit applies to `verify-gate.ps1`, which is a PowerShell script.
 
 | Gate | What | Full path | Kind | Handed over |
 |---|---|---|---|---|
-| — | **The docking commit and push.** This is also the missing half of DOCKING.md 5c — the hook has to be seen letting good work through | `D:\Data\Folders\My_AI_Projects\OnoBase` | git — run by Rehan | 09-20-2026 |
-| — | **Then the F001 flip**, through `verify-gate.ps1` with `-Evidence evidence\F001.txt` (RULES.md 9-10a), and a second commit for it | `D:\Data\Folders\My_AI_Projects\OnoBase` | git and test — run by Rehan | 09-20-2026 |
+| — | **The F001 flip.** `feature_list.proposed.json` is written and ready. Run `verify-gate.ps1` with `-Evidence evidence\F001.txt`; only on EXIT=0 does the proposed file replace the real one, then ONE commit for that ONE flip (RULES.md 46). If the gate refuses, stop and report — never work around it | `D:\Data\Folders\My_AI_Projects\OnoBase` | test, then git — run by Rehan | 09-20-2026 |
 | 1 | INTAKE.md — not written yet | — | decision | not yet |
 | 2 | ARCHITECTURE.md — not written yet | — | decision | not yet |
 | 3 | The real feature list — not written yet | — | decision | not yet |

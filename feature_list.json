@@ -42,9 +42,14 @@
         "Revert the break.",
         "Run it again and confirm it exits zero."
       ],
-      "passes": false,
-      "evidence": { "command": "", "output": "", "run_by": "", "run_at": "" },
-      "evidence_file": ""
+      "passes": true,
+      "evidence": {
+        "command": "cd /d D:\\Data\\Folders\\My_AI_Projects\\OnoBase\\onobase_App  then  npm run typecheck  (three stages: tsc -p tsconfig.app.json --noEmit, tsc -p tsconfig.electron.json --noEmit, tsc -p tsconfig.preload.json --noEmit, then echo typecheck: 0 errors). Break test: src\\utils\\colors.ts line 3 renamed MODULE_COLORS to MODULE_COLORS_BROKEN, npm run typecheck, then the rename undone and npm run typecheck again. Hook: git config core.hooksPath .githooks, then git add -A and git commit with the break in place, and again with it undone.",
+        "output": "GOOD CODE: typecheck: 0 errors. All three stages ran - app, electron and preload. The electron and preload stages had never been reached before, because the app stage had always failed first and stopped the && chain.\nBROKEN CODE: 10 errors in 2 files, and NO 'typecheck: 0 errors' line. Files and lines named: src\\App.tsx lines 31, 160 and 522, and src\\utils\\colors.ts lines 50 and 55. It followed the reference out of colors.ts into App.tsx, which is what proves it reads the project and not one file.\nRESTORED: typecheck: 0 errors.\nGIT POINTED AT THE HOOK: git config --get core.hooksPath printed .githooks.\nHOOK REFUSED BROKEN CODE: 'pre-commit: FAILED (exit 2) - npm run typecheck', the 10 errors listed, 'Commit refused.' Nothing was committed and --no-verify was not used. The (exit 2) is the check command's exit code carried up by npm, not the hook's own - the hook's own code was not captured.\nHOOK ALLOWED CLEAN CODE: the hook ran npm run typecheck, it passed, the commit was ALLOWED. Commit 7c8e26e on dev, pushed. Both directions of DOCKING.md 5c seen on the same day.\nRun by Rehan, 09-20-2026, Windows PowerShell 5.1. Ten pre-existing type errors in Onobase had to be fixed first; they are listed in the evidence file. Full record at evidence\\F001.txt.",
+        "run_by": "Rehan",
+        "run_at": "09-20-2026"
+      },
+      "evidence_file": "evidence\\F001.txt"
     },
     {
       "id": "F002",

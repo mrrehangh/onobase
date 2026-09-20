@@ -194,6 +194,37 @@ THE TEN BASELINE TYPE ERRORS THAT HAD TO BE FIXED FIRST
   never had the prop, sits in the same wrapper, and renders correctly.
 
 --------------------------------------------------------------------------------
+TEST 6 - THE PRE-COMMIT HOOK ALLOWED A CLEAN COMMIT
+--------------------------------------------------------------------------------
+  This is the other half of DOCKING.md 5c, and the half that was still missing when
+  this file was first written. Test 5 proved the hook says no. A hook that only ever
+  says no is as useless as one that only ever says yes - the refusal is only
+  trustworthy once the pass has been seen too.
+
+SETUP
+  colors.ts line 3 restored to  export const MODULE_COLORS: ModuleColor[] = [
+  The working tree otherwise held the whole of the docking work: the four templates,
+  the .githooks folder, .gitattributes, the typecheck script in package.json, the ten
+  baseline type fixes, this evidence file and PROGRESS.md.
+
+COMMAND
+  cd /d D:\Data\Folders\My_AI_Projects\OnoBase
+  git add -A
+  git commit -m "dock Onobase with Erudite: typecheck script, baseline type errors fixed, docking files"
+  git push origin dev
+
+OUTPUT
+  The hook ran npm run typecheck. The check passed. The commit was ALLOWED.
+  COMMIT 7c8e26e on branch dev. Pushed to the remote.
+  --no-verify was not used.
+
+  So the hook has now been seen in both directions on the same day, on the same
+  machine, against the same one-line break: it refused 10 errors and it let clean
+  code through. DOCKING.md 5c is satisfied.
+
+  Run by Rehan, 09-20-2026, Windows PowerShell 5.1.
+
+--------------------------------------------------------------------------------
 WHAT THIS FILE DOES NOT PROVE
 --------------------------------------------------------------------------------
   1. THE HOOK'S OWN EXIT CODE ON TEST 5 WAS NOT CAPTURED. What was seen is that the
@@ -202,10 +233,12 @@ WHAT THIS FILE DOES NOT PROVE
      was not read off the console. It is almost certainly 1, on the F005 precedent
      above, but almost certainly is not proof. Running  echo %ERRORLEVEL%  straight
      after a refused commit would settle it.
-  2. THE PASSING COMMIT HAS NOT BEEN MADE YET. DOCKING.md 5c asks for the hook to be
-     proven in BOTH directions - refused on broken code, then silent and successful
-     on good code. Only the refusal has been seen. Until a commit succeeds with the
-     check passing, it is not known that the hook lets good work through.
+  2. ANSWERED ON 09-20-2026, AND LEFT HERE RATHER THAN DELETED. This item used to
+     read that the passing commit had not been made and that only the refusal had
+     been seen. Commit 7c8e26e settled it - see TEST 6 above. The line is rewritten
+     rather than removed because a record of what was once unknown is worth more
+     than a tidy list, and because deleting it would leave the file looking as
+     though both directions had been proven from the start.
   3. NOTHING WAS RUN AGAINST ANY DATABASE. No Onobase connection was opened, and no
      part of the app was started. This is a compile-time check only.
   4. THE APP WAS NOT RUN. npm run dev was not executed. Code that type-checks can
