@@ -18,12 +18,21 @@ ceiling below 100%, exactly as in Erudite itself.
 | | |
 |---|---|
 | Last updated | 09-20-2026 by Cowork |
-| Phase | DOCKING — COMPLETE through step 5c, both directions proven, committed as `7c8e26e`; Gates 1, 2 and 3 not yet reached |
-| Features passing | 0 of 3 (template copy, not the real list). F001 is proven but NOT yet flipped — the flip waits on a successful commit. |
+| Phase | **GATES 1, 2 AND 3 ALL APPROVED by Rehan 09-20-2026.** Docking complete through step 5c, committed as `7c8e26e`. Phase 4, the build loop, starts once the approved feature list is committed |
+| Features passing | **1 of 41** once the approved list is committed. The file on disk still holds 1 of 3 — the real list is in `feature_list.proposed.json` and waits on the gate |
 
 ---
 
 ## Done
+
+**GATES 1, 2 AND 3 WERE ALL APPROVED BY REHAN ON 09-20-2026**, with four answers
+that changed the documents: connection passwords go in the Windows secure
+credential store or are not saved at all, never as plain text; Oracle is out of
+scope for now; Select Top 1000 Rows opens the query AND runs it, the way SSMS
+does; and there are three must-NOT-haves, now features F039, F040 and F041.
+`INTAKE.md` and `ARCHITECTURE.md` are stamped APPROVED. The feature list is
+`feature_list.proposed.json`, 41 features, one passing, and it becomes the record
+when the gate clears it.
 
 Only features whose `passes` is true AND whose `evidence` holds a command and its
 real output. Nothing reaches this section for having been built.
@@ -51,7 +60,7 @@ than finished — and abandoned work looks identical to finished work a week lat
 
 | Feature | On which step | What is blocking it |
 |---|---|---|
-| F001 | **Proven. The flip is prepared and waiting on the gate.** | Nothing about the proof. `evidence\F001.txt` holds all six tests, both hook directions included. `feature_list.proposed.json` is written and holds the flip, and nothing but F001 differs from the real file. It becomes real only if `verify-gate.ps1` returns EXIT=0 with `-Evidence evidence\F001.txt` (RULES.md 9-10a). Cowork cannot run PowerShell or git here — see the blocker under Waiting on Rehan. |
+| — | **Nothing is in progress.** F001 is done and flipped; the next feature is F004 and it is not started | The approved 41-feature list has to be committed first. Until then `init.ps1` reads the old three-feature file and names the wrong next feature. |
 
 ---
 
@@ -61,9 +70,15 @@ In order. The top row is what gets picked up, and nothing else starts first.
 
 | Order | Feature | Category | Why this one next |
 |---:|---|---|---|
-| 1 | F001 | infra | Nothing else can be trusted until the check command is proven to fail on broken code. DOCKING.md step 4 calls it out by name and says do not skip it. |
-| 2 | F002 | security | The gate scripts are already installed globally through the OpenCode plugin, so this is a short proof run against `Erudite\hooks\block-destructive.ps1`. |
-| 3 | — | — | Onobase's own first real feature is drafted but NOT written into the list. It is "Select Top 1000 Rows" from the right-click menu on a table in the object tree. It waits for Gate 3. |
+| 1 | F004 | data | Connect to PostgreSQL and see the object tree. It is the first thing a person does, and every other PostgreSQL feature stands on it. |
+| 2 | F005 | data | Run a SELECT and see rows. F004 plus F005 is the app usable by one person for one task, which is what Phase 3 asks the first features to deliver. |
+| 3 | F006–F012 | data, reporting, admin | The rest of the PostgreSQL path: View Data, editing, scripting, EXPLAIN, activity monitor, health, export. |
+| 4 | F013–F018 | data | MySQL, SQL Server and SQLite — connect, then query. One database per feature, as ruled. |
+| 5 | F019–F034 | mixed | The SSMS-style rest, proven on PostgreSQL first. |
+| 6 | F035–F038 | ui | Select Top 1000 Rows, PostgreSQL first, then one per database. It opens the query AND runs it. |
+| 7 | F039–F041 | security | The three must-NOT-haves. They can be taken at any point and should not wait until last — a promise nobody tested is a hope. |
+| — | F002 | security | A short proof run against `Erudite\hooks\block-destructive.ps1`, whenever it suits. |
+| — | F003 | — | Never. It is the template placeholder and can never pass (RULES.md 7 and 8). |
 
 ---
 
@@ -109,10 +124,10 @@ The same limit applies to `verify-gate.ps1`, which is a PowerShell script.
 
 | Gate | What | Full path | Kind | Handed over |
 |---|---|---|---|---|
-| — | **The F001 flip.** `feature_list.proposed.json` is written and ready. Run `verify-gate.ps1` with `-Evidence evidence\F001.txt`; only on EXIT=0 does the proposed file replace the real one, then ONE commit for that ONE flip (RULES.md 46). If the gate refuses, stop and report — never work around it | `D:\Data\Folders\My_AI_Projects\OnoBase` | test, then git — run by Rehan | 09-20-2026 |
-| 1 | INTAKE.md — not written yet | — | decision | not yet |
-| 2 | ARCHITECTURE.md — not written yet | — | decision | not yet |
-| 3 | The real feature list — not written yet | — | decision | not yet |
+| — | **Commit the approved 41-feature list.** `feature_list.proposed.json` holds it. Run `verify-gate.ps1` with NO `-Evidence` — nothing flips, so none is needed — and only on EXIT=0 does the proposed file replace the real one and get committed. If the gate refuses, stop and report; never work around it | `D:\Data\Folders\My_AI_Projects\OnoBase` | test, then git — run by Rehan | 09-20-2026 |
+| 1 | **INTAKE.md — APPROVED 09-20-2026** | `D:\Data\Folders\My_AI_Projects\OnoBase\INTAKE.md` | decision | closed |
+| 2 | **ARCHITECTURE.md — APPROVED 09-20-2026** | `D:\Data\Folders\My_AI_Projects\OnoBase\ARCHITECTURE.md` | decision | closed |
+| 3 | **The feature list — APPROVED 09-20-2026**, 41 features, 1 passing | `D:\Data\Folders\My_AI_Projects\OnoBase\feature_list.proposed.json` | decision | closed, pending the commit above |
 
 ---
 
@@ -151,6 +166,19 @@ at any point.
 Linux and has no `powershell.exe`, which is what `.githooks\pre-commit` execs. This
 is not a temporary outage and it will be true every session. Commits in Onobase are
 Rehan's, the same way migrations are.
+
+**THE THREE MUST-NOT-HAVES ARE PROMISES, NOT SETTINGS.** MN-1 Onobase changes
+nothing unless the person pressed Run or confirmed; MN-2 no password as plain
+text, ever; MN-3 nothing goes online. F039, F040 and F041 prove them, and each is
+written so a failure is recognisable — F040 says to search every file Onobase
+writes for a password you will recognise on sight. A negative requirement nobody
+tested is a hope.
+
+**TWO THINGS ARE DELIBERATELY ABSENT FROM THE FEATURE LIST.** Oracle, because it
+is out of scope for now — the word `'oracle'` stays in `DbType` at
+`src\types\index.ts` line 2 and is not built against. And the AI assistant,
+because intake §7 has not said whether paid services are allowed, and writing a
+feature for it would be choosing. Both are recorded gaps, RULES.md 31.
 
 **The check command is now trusted, and that is the foundation everything else
 stands on.** It was proven in both directions on 09-20-2026 before a single line of

@@ -27,9 +27,27 @@
     "",
     "category is one of: auth, data, ui, reporting, admin, security, infra"
   ],
+  "$draft": [
+    "APPROVED by Rehan 09-20-2026 (Gate 3). Written 09-20-2026.",
+    "This is the PROPOSAL file. It becomes the record only when verify-gate.ps1",
+    "returns 0 and it replaces feature_list.json.",
+    "ORACLE IS OUT OF SCOPE FOR NOW - ruled by Rehan 09-20-2026. The word",
+    "oracle stays in the DbType list at src\\types\\index.ts line 2 and is not",
+    "built against. There is deliberately NO Oracle feature in this list.",
+    "THE AI ASSISTANT HAS NO FEATURE EITHER, because intake section 7 has not",
+    "said whether paid services are allowed. Both are recorded gaps, RULES.md 31.",
+    "F001, F002 and F003 are kept EXACTLY as they are - ids, categories,",
+    "descriptions, steps, passes and evidence all untouched. Append-only,",
+    "RULES.md 7-8. F001 stays passing; F003 is the template placeholder that",
+    "can never pass and may not be reworded or deleted, so it stays false",
+    "permanently and caps every percentage read off this file.",
+    "Everything from F004 is new and every one starts false, including the",
+    "many things that visibly already work. Appearing to work is not evidence",
+    "- DOCKING.md step 7, FAILURES.md F9."
+  ],
   "project": "Onobase",
   "generated": "09-20-2026",
-  "architecture_approved": "not yet - Gate 2 has not been reached as of 09-20-2026",
+  "architecture_approved": "APPROVED by Rehan 09-20-2026",
   "features": [
     {
       "id": "F001",
@@ -75,6 +93,781 @@
       ],
       "passes": false,
       "evidence": { "command": "", "output": "", "run_by": "", "run_at": "" },
+      "evidence_file": ""
+    },
+    {
+      "id": "F004",
+      "category": "data",
+      "description": "A person connects Onobase to a PostgreSQL database and sees that database's schemas, tables and columns in the object tree on the left.",
+      "steps": [
+        "Start Onobase with npm run dev from onobase_App. Open the connect dialog and choose PostgreSQL.",
+        "Enter host, port, user, password and database for a real PostgreSQL server and connect.",
+        "Confirm no error banner appears and the object tree on the left fills with schema names.",
+        "Expand one schema, then one table. Confirm the column names and their data types appear, and that primary key columns are marked.",
+        "FAILS IF: the tree stays empty, an error appears, or a table's columns do not match what the server actually has."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F005",
+      "category": "data",
+      "description": "A person types a SELECT statement in the query editor against PostgreSQL, runs it, and sees the rows come back in the result grid.",
+      "steps": [
+        "With the PostgreSQL connection from F004 open, open a query tab.",
+        "Type a SELECT against a table that has rows in it.",
+        "Run it.",
+        "Confirm the result grid fills, the column headers match the columns selected, and the row count shown matches the number of rows the same query returns in another tool.",
+        "Run a statement with a deliberate syntax error and confirm the error text from PostgreSQL is shown and no rows appear.",
+        "FAILS IF: the grid stays empty on a good query, the counts disagree, or a bad query fails silently."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F006",
+      "category": "data",
+      "description": "A person right-clicks a PostgreSQL table, chooses View Data, and reads its rows a page at a time.",
+      "steps": [
+        "With PostgreSQL connected, right-click a table in the object tree.",
+        "Choose View Data. Confirm a new tab opens named for that schema and table.",
+        "Confirm rows appear and the footer states which rows are shown out of how many.",
+        "Move to page 2 and confirm the rows change and the range in the footer changes with them.",
+        "Change the page size and confirm the number of rows shown changes to match.",
+        "FAILS IF: the tab opens empty, the total count is wrong, or paging repeats or skips rows."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F007",
+      "category": "data",
+      "description": "A person changes a cell, adds a row and deletes a row in a PostgreSQL table through the data viewer, and the change is really in the database.",
+      "steps": [
+        "Open View Data on a PostgreSQL test table that is safe to change.",
+        "Edit one cell and save it. Confirm no error appears.",
+        "In a separate query tab, SELECT that row and confirm the new value is there.",
+        "Insert a new row through the viewer, then SELECT it back and confirm it exists.",
+        "Delete that row through the viewer, then SELECT it back and confirm it is gone.",
+        "FAILS IF: the screen shows a change the database does not have, or an error is shown for a change that did happen."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F008",
+      "category": "data",
+      "description": "A person right-clicks a PostgreSQL table and scripts it as SELECT, INSERT, CREATE, DROP or ALTER, and the generated SQL opens in a query tab.",
+      "steps": [
+        "With PostgreSQL connected, right-click a table and choose Script Table As, then SELECT.",
+        "Confirm a query tab opens holding a SELECT that names the real columns of that table, in order.",
+        "Repeat for INSERT, CREATE, DROP and ALTER, and confirm each one opens a tab with SQL of that kind naming the right table.",
+        "Confirm the CREATE script names the real column types and NOT NULL settings.",
+        "DO NOT RUN THE DROP OR ALTER SCRIPT. Scripting is generating text, not executing it.",
+        "FAILS IF: any of the five produces nothing, or names columns the table does not have."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F009",
+      "category": "reporting",
+      "description": "A person asks PostgreSQL to explain a query and sees the execution plan drawn as a diagram.",
+      "steps": [
+        "With PostgreSQL connected, put a SELECT that joins two tables into a query tab.",
+        "Ask for the execution plan.",
+        "Confirm a plan appears as connected boxes, each naming a node type such as Seq Scan or Hash Join.",
+        "Confirm the same node types appear in the plain text plan beside it.",
+        "FAILS IF: the diagram is empty while the text plan is not, or the boxes name nodes the text plan does not."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F010",
+      "category": "admin",
+      "description": "A person opens the activity monitor on PostgreSQL, sees the sessions currently connected, and can stop one.",
+      "steps": [
+        "With PostgreSQL connected, open the activity monitor.",
+        "Confirm the session list shows at least Onobase's own connection, with a process id, a user and a state.",
+        "From another tool, start a long-running query on the same server. Confirm it appears in the list within one refresh.",
+        "Select it and stop it. Confirm it disappears from the list and the other tool reports the query was cancelled.",
+        "FAILS IF: the list is empty while sessions exist, or stopping one does not stop it."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F011",
+      "category": "reporting",
+      "description": "A person opens the health dashboard on PostgreSQL and sees real figures for that server.",
+      "steps": [
+        "With PostgreSQL connected, open the health dashboard.",
+        "Confirm it shows figures rather than blanks or zeros across the board.",
+        "Pick one figure and check it against the same value queried directly in a query tab.",
+        "FAILS IF: the two disagree, or the dashboard shows figures when nothing is connected."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F012",
+      "category": "reporting",
+      "description": "A person exports a PostgreSQL result set to a CSV file and to a JSON file, and both open correctly.",
+      "steps": [
+        "Run a query in a query tab that returns at least 20 rows.",
+        "Export the result to CSV and save it.",
+        "Open the CSV in a spreadsheet program and confirm the header row and the row count match the grid.",
+        "Export the same result to JSON and confirm it parses and holds the same number of records.",
+        "FAILS IF: either file is empty, truncated, or has a different row count from the grid."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F013",
+      "category": "data",
+      "description": "A person connects Onobase to a MySQL database and sees its schemas, tables and columns in the object tree.",
+      "steps": [
+        "Start Onobase with npm run dev from onobase_App. Open the connect dialog and choose MySQL.",
+        "Enter host, port, user, password and database for a real MySQL server and connect.",
+        "NOTE BEFORE STARTING: src\\components\\ConnectDialog.tsx line 225 switches the load-databases button off for everything but PostgreSQL. Record whether connecting works without it, or whether that line has to be changed first.",
+        "Confirm the object tree fills and that expanding a table shows its real columns and types.",
+        "FAILS IF: the tree stays empty, an error appears, or the columns do not match the server."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F014",
+      "category": "data",
+      "description": "A person runs a SELECT against MySQL and sees the rows in the result grid.",
+      "steps": [
+        "With the MySQL connection from F013 open, open a query tab and run a SELECT against a table with rows in it.",
+        "Confirm the grid fills and the row count matches the same query run in another tool.",
+        "Run a statement with a deliberate syntax error and confirm MySQL's error text is shown and no rows appear.",
+        "FAILS IF: the grid stays empty on a good query, the counts disagree, or a bad query fails silently."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F015",
+      "category": "data",
+      "description": "A person connects Onobase to a SQL Server database and sees its schemas, tables and columns in the object tree.",
+      "steps": [
+        "Start Onobase with npm run dev from onobase_App. Open the connect dialog and choose SQL Server.",
+        "Enter host, port, user, password and database for a real SQL Server instance and connect.",
+        "NOTE BEFORE STARTING: the same ConnectDialog.tsx line 225 limit applies. Record what happens.",
+        "Confirm the object tree fills and that expanding a table shows its real columns and types.",
+        "FAILS IF: the tree stays empty, an error appears, or the columns do not match the server."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F016",
+      "category": "data",
+      "description": "A person runs a SELECT against SQL Server and sees the rows in the result grid.",
+      "steps": [
+        "With the SQL Server connection from F015 open, open a query tab and run a SELECT against a table with rows in it.",
+        "Confirm the grid fills and the row count matches the same query run in SSMS.",
+        "Run a statement with a deliberate syntax error and confirm SQL Server's error text is shown and no rows appear.",
+        "FAILS IF: the grid stays empty on a good query, the counts disagree, or a bad query fails silently."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F017",
+      "category": "data",
+      "description": "A person opens a SQLite database file in Onobase and sees its tables and columns in the object tree.",
+      "steps": [
+        "Start Onobase with npm run dev from onobase_App. Open the connect dialog and choose SQLite.",
+        "Browse to a real .db, .sqlite or .sqlite3 file and open it.",
+        "Confirm the object tree fills with that file's tables, and that expanding one shows its real columns and types.",
+        "Confirm the internal sqlite_ tables are not listed.",
+        "FAILS IF: the tree stays empty, the file does not open, or the columns do not match the file."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F018",
+      "category": "data",
+      "description": "A person runs a SELECT against an open SQLite file and sees the rows in the result grid.",
+      "steps": [
+        "With the SQLite file from F017 open, open a query tab and run a SELECT against a table with rows in it.",
+        "Confirm the grid fills and the row count matches the same query run in another SQLite tool.",
+        "Run a statement with a deliberate syntax error and confirm SQLite's error text is shown and no rows appear.",
+        "FAILS IF: the grid stays empty on a good query, the counts disagree, or a bad query fails silently."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F019",
+      "category": "ui",
+      "description": "A person opens the schema diagram on a PostgreSQL connection and sees the tables drawn with their foreign key relationships between them.",
+      "steps": [
+        "With PostgreSQL connected to a database that has at least one foreign key, open the diagram.",
+        "Confirm each table appears as a card listing its columns.",
+        "Confirm a line joins the two tables that a foreign key actually relates, and is labelled with the two column names.",
+        "FAILS IF: tables are missing, or a line joins two tables that have no foreign key between them."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F020",
+      "category": "ui",
+      "description": "A person groups tables into named, coloured modules on the canvas, closes Onobase, reopens it, and the grouping is still there.",
+      "steps": [
+        "With PostgreSQL connected, create a module on the canvas, name it and give it a colour.",
+        "Drag at least two tables into it.",
+        "Close Onobase completely and start it again, connecting to the same database.",
+        "Confirm the module is still there, with the same name, the same colour and the same tables.",
+        "FAILS IF: the layout is empty on reopening, or the tables are in the wrong module."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F021",
+      "category": "reporting",
+      "description": "A person compares two PostgreSQL databases and sees which objects are only in one, only in the other, and which differ.",
+      "steps": [
+        "With PostgreSQL connected as the first database, open schema comparison and connect a second PostgreSQL database.",
+        "Use two databases you already know differ - for example, add a table to one of them first.",
+        "Run the comparison.",
+        "Confirm the table you added appears under only-in-that-one, and not under the other two lists.",
+        "FAILS IF: a known difference is missing, or an object appears in a list it does not belong in."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F022",
+      "category": "data",
+      "description": "A person searches for a piece of text across every table of a PostgreSQL connection and sees which tables and columns hold it.",
+      "steps": [
+        "With PostgreSQL connected, pick a value you know exists in exactly one column of one table.",
+        "Run the global search for it.",
+        "Confirm the result names that table and that column.",
+        "Search for a value you know is in no table and confirm the result is empty rather than an error.",
+        "FAILS IF: a known match is missed, or a table is reported that does not hold the value."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F023",
+      "category": "admin",
+      "description": "A person runs several queries, opens the query log, and sees each one recorded with how long it took.",
+      "steps": [
+        "With PostgreSQL connected, run three different queries, at least one of which fails.",
+        "Open the query log.",
+        "Confirm all three appear, newest first, each with its text and a duration.",
+        "Confirm the failed one is marked as failed.",
+        "Clear the log and confirm it is empty.",
+        "FAILS IF: a query that ran is missing, or a failure is recorded as a success."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F024",
+      "category": "data",
+      "description": "A person imports a CSV file into a new PostgreSQL table and the rows arrive.",
+      "steps": [
+        "With PostgreSQL connected, prepare a small CSV file with a header row and at least 20 rows.",
+        "Run the CSV import wizard, pointing it at that file and at a new table name.",
+        "Confirm the wizard shows a preview that matches the file.",
+        "Finish the import, then SELECT from the new table and confirm the row count and the values match the file.",
+        "FAILS IF: the count is wrong, the columns are in the wrong order, or values are mangled."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F025",
+      "category": "data",
+      "description": "A person generates test rows into a PostgreSQL table and they appear in the table.",
+      "steps": [
+        "With PostgreSQL connected, right-click a test table that is safe to change and choose Generate Test Data.",
+        "Ask for a known number of rows, for example 50.",
+        "Finish, then SELECT a count from that table and confirm it rose by exactly that number.",
+        "Confirm the generated values suit each column's type.",
+        "FAILS IF: the count is wrong, or a value does not fit its column's type."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F026",
+      "category": "reporting",
+      "description": "A person turns a result set into a chart and the chart matches the numbers in the grid.",
+      "steps": [
+        "Run a query in a query tab that returns a label column and a number column, with at least five rows.",
+        "Switch the result to a chart.",
+        "Confirm there is one bar or point per row and the labels match the label column.",
+        "Pick the largest value in the grid and confirm it is the largest in the chart.",
+        "FAILS IF: the chart has a different number of points from the grid, or the ordering of sizes disagrees."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F027",
+      "category": "ui",
+      "description": "A person opens a cell holding JSON and reads it as a formatted, expandable structure rather than one long line.",
+      "steps": [
+        "With PostgreSQL connected, run a query returning a column that holds JSON.",
+        "Open that cell in the JSON viewer.",
+        "Confirm it is shown indented, with expandable sections, and that the values match the raw text.",
+        "Open a cell holding text that is not valid JSON and confirm it says so rather than showing nothing.",
+        "FAILS IF: valid JSON fails to render, or invalid JSON fails silently."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F028",
+      "category": "ui",
+      "description": "A person bookmarks a query, closes Onobase, reopens it, and can run the bookmarked query again.",
+      "steps": [
+        "Write a query in a query tab and save it as a bookmark with a name.",
+        "Close Onobase completely and start it again.",
+        "Open the bookmark panel and confirm the bookmark is there under the same name.",
+        "Open it and confirm the query text is exactly what was saved, then run it.",
+        "FAILS IF: the bookmark is gone after restarting, or the text has changed."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F029",
+      "category": "ui",
+      "description": "A person inserts a SQL snippet from the snippet panel into a query tab.",
+      "steps": [
+        "Open a query tab and open the snippet panel.",
+        "Insert one snippet.",
+        "Confirm the snippet's text appears in the editor at the cursor.",
+        "Confirm nothing that was already in the editor was replaced or lost.",
+        "FAILS IF: the text is inserted in the wrong place, or existing text is overwritten."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F030",
+      "category": "data",
+      "description": "A person designs a new table in the table designer and reads the CREATE statement it produces.",
+      "steps": [
+        "With PostgreSQL connected, open the table designer.",
+        "Add three columns with different types, mark one as the primary key, and mark one as not nullable.",
+        "Switch to the generated SQL view.",
+        "Confirm the CREATE statement names all three columns with the right types, the primary key and the NOT NULL.",
+        "DO NOT RUN IT. Generating the statement is the feature; running it is a schema change and belongs to the person.",
+        "FAILS IF: a column is missing from the statement, or a type or constraint does not match what was entered."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F031",
+      "category": "infra",
+      "description": "A person reaches a PostgreSQL server that is only accessible through an SSH tunnel, and queries it.",
+      "steps": [
+        "Set up the connection with SSH tunnel details for a server that cannot be reached directly.",
+        "Connect.",
+        "Confirm the object tree fills, which proves the tunnel carried the connection.",
+        "Run a SELECT and confirm rows come back.",
+        "Disconnect and confirm the tunnel is closed rather than left open.",
+        "FAILS IF: the connection succeeds without the tunnel being used, or the tunnel stays open after disconnecting."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F032",
+      "category": "admin",
+      "description": "A person saves a connection with a name, puts it in a group, closes Onobase, reopens it, and connects from the saved entry.",
+      "steps": [
+        "Open the connection manager and save a connection under a name, in a named group.",
+        "Close Onobase completely and start it again.",
+        "Confirm the saved connection is still listed, in the same group.",
+        "Connect from it without retyping the host, port, user or database, and confirm the object tree fills.",
+        "FAILS IF: the saved entry is gone after restarting, or connecting from it fails while typing the same details by hand works."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F033",
+      "category": "admin",
+      "description": "A person opens a git repository in the git panel and sees its current status and recent commits.",
+      "steps": [
+        "Open the git panel and point it at a real git repository folder on this machine.",
+        "Confirm the changed files it lists match what git status reports in a terminal.",
+        "Confirm the recent commits it lists match git log for the same repository.",
+        "FAILS IF: the two disagree, or the panel shows a clean tree when there are changes."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F034",
+      "category": "ui",
+      "description": "A person switches Onobase between light and dark, and the choice survives a restart.",
+      "steps": [
+        "Open settings and switch the theme.",
+        "Confirm the whole window changes, including the object tree, the query editor and the result grid, with no unreadable text left behind.",
+        "Close Onobase completely and start it again.",
+        "Confirm the chosen theme is still in use.",
+        "FAILS IF: any panel keeps the old colours, or the choice is lost on restart."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F035",
+      "category": "ui",
+      "description": "A person right-clicks a PostgreSQL table in the object tree, chooses Select Top 1000 Rows, and a query tab opens holding a SELECT limited to 1000 rows for that table AND RUNS IT, so the rows are already on screen.",
+      "steps": [
+        "With PostgreSQL connected, right-click a table that has MORE than 1000 rows.",
+        "Confirm the menu offers Select Top 1000 Rows.",
+        "Choose it. Confirm a new query tab opens, titled for that table.",
+        "Confirm the SQL names the correct schema and table and limits the result to 1000 rows.",
+        "Confirm the query RAN BY ITSELF - the rows are already in the grid without anyone pressing Run. Ruled by Rehan 09-20-2026: it opens AND runs, which is what SSMS does.",
+        "Confirm exactly 1000 rows came back.",
+        "Repeat on a table with FEWER than 1000 rows. Confirm every row comes back with no error.",
+        "CHECK AGAINST MUST-NOT-HAVE MN-1: running a SELECT by itself is allowed because the person chose the menu item and a SELECT changes nothing. Confirm nothing but a SELECT was sent - the query log must show one SELECT and no write.",
+        "FAILS IF: the menu item is missing, the SQL names the wrong table, the rows do not appear until Run is pressed, more than 1000 rows come back, the small table errors, or anything other than a SELECT was sent."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F036",
+      "category": "ui",
+      "description": "The same Select Top 1000 Rows menu item works on a MySQL connection, opening the query and running it.",
+      "steps": [
+        "With MySQL connected (F013), right-click a table with more than 1000 rows.",
+        "Choose Select Top 1000 Rows and confirm a query tab opens with SQL for that table, limited to 1000 rows.",
+        "Confirm the query RAN BY ITSELF and exactly 1000 rows are already in the grid.",
+        "Repeat on a table with fewer than 1000 rows and confirm every row comes back with no error.",
+        "FAILS IF: the item is missing on MySQL, refuses with a PostgreSQL-only message, does not run by itself, or returns the wrong number of rows."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F037",
+      "category": "ui",
+      "description": "The same Select Top 1000 Rows menu item works on a SQL Server connection, using SELECT TOP rather than LIMIT, opening the query and running it.",
+      "steps": [
+        "With SQL Server connected (F015), right-click a table with more than 1000 rows.",
+        "Choose Select Top 1000 Rows and confirm a query tab opens with SQL for that table.",
+        "Confirm the SQL uses SELECT TOP 1000, which is SQL Server's form - a LIMIT clause is a syntax error there.",
+        "Confirm the query RAN BY ITSELF and exactly 1000 rows are already in the grid.",
+        "Repeat on a table with fewer than 1000 rows and confirm every row comes back with no error.",
+        "FAILS IF: the SQL uses LIMIT, the item is missing, it does not run by itself, or the row count is wrong."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F038",
+      "category": "ui",
+      "description": "The same Select Top 1000 Rows menu item works on an open SQLite file, opening the query and running it.",
+      "steps": [
+        "With a SQLite file open (F017), right-click a table with more than 1000 rows.",
+        "Choose Select Top 1000 Rows and confirm a query tab opens with SQL for that table, limited to 1000 rows.",
+        "Confirm the query RAN BY ITSELF and exactly 1000 rows are already in the grid.",
+        "Repeat on a table with fewer than 1000 rows and confirm every row comes back with no error.",
+        "FAILS IF: the item is missing on SQLite, refuses with a PostgreSQL-only message, does not run by itself, or returns the wrong number of rows."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F039",
+      "category": "security",
+      "description": "MUST-NOT-HAVE MN-1: Onobase never changes a database unless the person pressed Run or confirmed the change. Nothing writes by itself - not on opening a table, not on a refresh, not on closing a tab.",
+      "steps": [
+        "With PostgreSQL connected to a test database, turn on statement logging on that server, or keep the Onobase query log open beside you, so every statement it sends can be read.",
+        "Connect, expand several schemas and tables in the object tree, open View Data on a table, page forward and back, and close the tab. Press Run on nothing.",
+        "Read every statement Onobase sent. Confirm every one is a SELECT or a read of the catalogue, and that there is NO INSERT, UPDATE, DELETE, CREATE, ALTER, DROP or TRUNCATE.",
+        "Open the table designer, design a table, read the generated CREATE statement, and close the tab without running it. Confirm no CREATE reached the server.",
+        "Right-click a table and script it as DROP, then close the tab. Confirm no DROP reached the server - generating the text is the feature, running it is not.",
+        "Take a row count of the test table before and after the whole exercise and confirm it is unchanged.",
+        "FAILS IF: any statement that changes data or schema was sent without the person pressing Run or confirming, or the row count moved."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F040",
+      "category": "security",
+      "description": "MUST-NOT-HAVE MN-2: Onobase never saves a password as plain text. A password is held in the Windows secure credential store, or not saved at all.",
+      "steps": [
+        "Start from a clean profile if you can, so what appears is what this test created.",
+        "Connect to PostgreSQL with a password you will recognise on sight - for example ZZTESTPASSWORD123 - and choose to remember it.",
+        "Close Onobase.",
+        "Search every file Onobase writes for that exact string: the application data folder, any settings or history file, the query log, and the saved layouts. Use a whole-folder search so nothing is missed.",
+        "Confirm the string is found NOWHERE in plain text.",
+        "Confirm the password IS in the Windows secure credential store - Control Panel, Credential Manager, Windows Credentials - and find the entry Onobase created.",
+        "Reopen Onobase and confirm it still connects from the saved entry, which proves the credential store is really where the password came from.",
+        "Repeat with the remember option turned OFF. Confirm nothing is written anywhere and Onobase asks for the password again.",
+        "FAILS IF: the string is found in any file, or it is in no file and no credential store entry exists while the saved connection still works - which would mean it is somewhere nobody looked."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
+      "evidence_file": ""
+    },
+    {
+      "id": "F041",
+      "category": "security",
+      "description": "MUST-NOT-HAVE MN-3: Onobase never sends data or queries anywhere online. The only network traffic it makes is the connection to the database the person asked for, and an SSH tunnel where the person configured one.",
+      "steps": [
+        "Start a network capture on the machine, or use a firewall that logs outbound connections per program.",
+        "Start Onobase and leave it on the connect dialog for two minutes without connecting to anything.",
+        "Confirm it made NO outbound connection in that time - no telemetry, no update check, no crash reporting.",
+        "Connect to a PostgreSQL server, run several queries, and open the diagram, the health dashboard and the query log.",
+        "Read the capture. Confirm every outbound connection went to the database host and port the person typed, and nowhere else.",
+        "Close Onobase and confirm nothing is sent on the way out.",
+        "NOT COVERED BY THIS FEATURE: the AI assistant component, which by its nature would call an outside service. It has no feature in this list because intake section 7 has not said whether paid services are allowed. Do not open it during this test, and record that it was not tested.",
+        "FAILS IF: any outbound connection goes anywhere but the database the person named or a configured SSH host."
+      ],
+      "passes": false,
+      "evidence": {
+        "command": "",
+        "output": "",
+        "run_by": "",
+        "run_at": ""
+      },
       "evidence_file": ""
     }
   ]
